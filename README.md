@@ -12,3 +12,9 @@ How It Works
 Run the following command to translate duplicated page automatically
 
 `pynotion_translate.py <url> <token> <language>`
+
+Contributions
+If you have any feedback or suggestions to this tool, please feel free to write in in this GitHub repository's issue tracker. Pull requests are welcome too!
+
+License
+The MIT Licen
