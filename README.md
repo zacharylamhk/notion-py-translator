@@ -8,10 +8,12 @@ How It Works
 2. Duplicate the page which will translate
 3. Add connect to duplicated page
     https://www.notion.so/help/add-and-manage-connections-with-the-api#add-connections-to-pages
+4. check the language code
+    https://cloud.google.com/translate/docs/languages
 
 Run the following command to translate duplicated page automatically
 
-`pynotion_translate.py <token> <language> <url>`
+`pynotion_translate.py <notion api token> <language code> <notion url>`
 
 
 ## License
