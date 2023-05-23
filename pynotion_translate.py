@@ -9,54 +9,59 @@ def getBlockIdFromUrl(url):
     block_id= url[url.rfind("-")+1:]
     return block_id
 
+def translate(url,token,t_target):
+    translate_block(getBlockIdFromUrl(url),token,t_target)
 
-def translate(url,token,ttarget):
-    block_id    = getBlockIdFromUrl(url)
+def translate_block(block_id,token,t_target):
     url         =   "https://api.notion.com/v1/blocks/"+block_id
-    url_child   =   url+"/children?page_size=1000"
+    url_child   =   url+"/children?page_size=100"
     headers =   {
         "Authorization":"Bearer "+token,
         "Notion-Version":"2022-02-22"
         }
-
     headers_patch    =   {
         "Authorization":"Bearer "+token,
         "Content-Type":"application/json",
         "Notion-Version":"2022-06-28"
         }
-    response        =   requests.get(url, headers=headers)
+    response        =   requests.get(url_child, headers=headers)
     data            =   response.json()
     if data['object']=="error":
         print("404")
-    elif  data['object']=="block":
-        title           =   data["child_page"]["title"]
-        parent_id       =   data["id"]
-        response        =   requests.get(url_child, headers=headers)
-        data            =   response.json()
+    elif data['object']=="list":
+        #data=data['results']
         for i in range(len(data["results"])):
-            if  data["results"][i]["type"]=="paragraph":
+            block_type= data["results"][i]["type"]
+            if  block_type=="paragraph" or block_type=="to_do" or block_type.find("heading")>-1 or  block_type=="bulleted_list_item" or block_type=="numbered_list_item" or block_type=="callout" or block_type=="quote" or block_type=="toggle":
                 block=data["results"][i]["id"]
+                print("working on block: "+ str(block))
                 try:
-                    if data["results"][i]["paragraph"]['rich_text'][0]['annotations']['code'] == False :
+                    if data["results"][i][block_type]['rich_text'][0]['annotations']['code'] == False :
                         try :
-                            data["results"][i]["paragraph"]["rich_text"][0]["text"]["content"]= GoogleTranslator(source='auto', target=ttarget).translate(data["results"][i]["paragraph"]["rich_text"][0]["text"]["content"])
+                            data["results"][i][block_type]["rich_text"][0]["text"]["content"]= GoogleTranslator(source='auto', target=t_target).translate(data["results"][i][block_type]["rich_text"][0]["text"]["content"])
                         except :
-                            pass
+                            print("Except1")
                         try :
-                            data["results"][i]["paragraph"]["rich_text"][0]["plain_text"]=GoogleTranslator(source='auto', target=ttarget).translate(data["results"][i]["paragraph"]["rich_text"][0]["plain_text"])
+                            data["results"][i][block_type]["rich_text"][0]["plain_text"]=GoogleTranslator(source='auto', target=t_target).translate(data["results"][i][block_type]["rich_text"][0]["plain_text"])
                         except:
-                            pass
-                        patch_data={"paragraph":data["results"][i]["paragraph"]}
+                            print("Except2")
+                        patch_data={block_type:data["results"][i][block_type]}
                         url_patch   =   "https://api.notion.com/v1/blocks/"+block
                         reponse = requests.patch(url_patch, data=json.dumps(patch_data), headers=headers_patch)
-                        print(reponse.json())
+                        if (reponse.json()['has_children']):
+                            block_id=reponse.json()['id']
+                            translate_block(block_id,token,t_target)
+
                 except:
                     pass
-        print("Complete")
+
+def translate_text(text,language):
+    return GoogleTranslator(source='auto', target=language).translate(text)
 
 
 if __name__ == "__main__":
-    url     =   sys.argv[1]
-    token   =   sys.argv[2]
-    ttarget =   sys.argv[3]
-    translate(block_id,token,ttarget)
+    url     =   sys.argv[3]
+    token   =   sys.argv[1]
+    ttarget =   sys.argv[2]
+    translate_block(getBlockIdFromUrl(url),token,ttarget)
+
