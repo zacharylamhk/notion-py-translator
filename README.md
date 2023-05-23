@@ -12,8 +12,3 @@ How It Works
 
 Run the following command to translate duplicated page automatically
 
-Create a Notion internal integration and save its token as NOTION_API_TOKEN env variable
-Create a DeepL API account and save its token as DEEPL_API_TOKEN env variable
-Share the target Notion page with your Notion integration
-Run the following command to generate a translated page automatically
-python pynotion_translate.py <url> <token> <language>
