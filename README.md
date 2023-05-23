@@ -1,6 +1,5 @@
 # notion-py-translator
 CLI tool to translate Notion pages into a different language (use google translate)
-
 Notion PyTranslator is a CLI tool that enables Notion users to use translate Notion pages into a different language by using Google Translate API.
 
 How It Works
