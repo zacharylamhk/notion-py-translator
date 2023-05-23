@@ -10,9 +10,4 @@ How It Works
     https://www.notion.so/help/add-and-manage-connections-with-the-api#add-connections-to-pages
 
 Run the following command to translate duplicated page automatically
-
-
-    
-    
-    
-pynotion_translate.py <url> <token> <language>
+`pynotion_translate.py <url> <token> <language>`
